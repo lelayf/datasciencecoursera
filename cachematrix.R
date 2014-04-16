@@ -5,6 +5,7 @@
 ## This fuction creates a matrix caching structure based on a closure
 
 makeCacheMatrix <- function(x = matrix()) {
+    # x_ stores the inverse matrix
     x_ <- NULL
     set <- function(y) {
       x <<- y
