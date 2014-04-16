@@ -1,5 +1,6 @@
 ## These functions essentially build a caching facility
 ## for inverse matrix computation
+## See example usage in MatrixCaching.md (github will interpret the Markdown for you)
 
 ## This fuction creates a matrix caching structure based on a closure
 
