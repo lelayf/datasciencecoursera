@@ -1,63 +1,121 @@
-#
-#   This script uses data from the UCI Machine Learning Repository :
-#   Human Activity Recognition Using Smartphones Data Set 
-#   http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones#
-#
-#   Associated research :
-#   Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. 
-#   "Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support 
-#   Vector Machine." International Workshop of Ambient Assisted Living (IWAAL 2012). 
-#   Vitoria-Gasteiz, Spain. Dec 2012
-#
-
+#' Tidying the UCI HAR data set
+#' ========================================================
+#' 
+#' This script uses data from the UCI Machine Learning Repository :
+#' **Human Activity Recognition Using Smartphones Data Set**
+#' http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
+#' 
+#' *Associated research*
+#' 
+#' Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. 
+#' "Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector Machine." International Workshop of Ambient Assisted Living (IWAAL 2012). 
+#' Vitoria-Gasteiz, Spain. Dec 2012
+#' 
+#' ### Preamble
+#' 
+#' This README was written with the knitr pacakge. In RStudio you should actually be able to open tidy.Rmd and run the "Knit HTML" command in the script editor toolbar. It will execute all the R code chunks contained in the Rmd file.
+#' 
+#' If you ever want to adopt "Rmd-first" coding practices you can still extract the R code from the Rmd file like this :
+#' ```
+#' library(knitr)
+#' purl("tidy.Rmd", output = "run_analysis.R", documentation = 2)
+#' ```
+#' 
+#' ### Step 1 : data merge
+#' 
+#' The UCI dataset is broken down in several files : predictor features, predicted activities, subject IDs. Each of this 3 sets is further broken down into training (70% of entire dataset) and test set (remaining 30%). 
+#' 
+#' Let's start by loading feature labels from provided file :
+## ------------------------------------------------------------------------
 features <- read.table("features.txt", header=FALSE, stringsAsFactors=FALSE)
 names(features) <- c("id","name")
 
-# load test sets
+#' 
+#' Then let's load test data sets :
+## ------------------------------------------------------------------------
 xtest <- read.table("test/X_test.txt")
 names(xtest) <- features$name
 ytest <- read.table("test/y_test.txt")
 names(ytest) <- c("activity_id")
 stest <- read.table("test/subject_test.txt")
 names(stest) <- c("subject_id")
-# merge test sets side by side
+
+#' 
+#' Merge test sets side by side :
+## ------------------------------------------------------------------------
 test <- cbind(stest, xtest, ytest)
+
+#' 
+#' Let's check dimensions and characteristics of our test data :
+## ------------------------------------------------------------------------
 str(test)
 
-# load training sets
+#' 
+#' 
+#' Load training sets :
+## ------------------------------------------------------------------------
 xtrain <- read.table("train/X_train.txt")
 names(xtrain) <- features$name
 ytrain <- read.table("train/y_train.txt")
 names(ytrain) <- c("activity_id")
 strain <- read.table("train/subject_train.txt")
 names(strain) <- c("subject_id")
-# merge training sets side by side
+
+#' 
+#' Merge training sets side by side :
+## ------------------------------------------------------------------------
 train <- cbind(strain, xtrain, ytrain)
+
+#' 
+#' Let's check dimensions and characteristics of our training data :
+## ------------------------------------------------------------------------
 str(train)
 
-# append training and test sets together (on top of each other, by rows)
+#' 
+#' Now let's append training and test sets together (on top of each other, by rows) :
+## ------------------------------------------------------------------------
 full <- rbind(train,test)
 str(full)
 
+#' 
+#' 
+#' ### Step 2 - select specific features
+#' 
+#' Pattern matching on columns names can be done with matchcols function in gdata package.
+## ------------------------------------------------------------------------
 library(gdata)
 
-# match features associated to mean() and std() computation 
+#' 
+#' Match features whose name contain string "mean()" or string "std()" using a regular expression (we make sure to use double backslash to escape parenthesis) :
+## ------------------------------------------------------------------------
 meanstdcols <- matchcols(full, with=c("mean\\(\\)|std\\(\\)"))
 
-# build dataset with subject, activity, mean and std features
+#' 
+#' Ok now let's build a lighter dataset with subject, activity and only mean and std features :
+## ------------------------------------------------------------------------
 sams <- full[,c("subject_id", "activity_id", meanstdcols)]
 
-# load activty labels from file
+#' 
+#' 
+#' ### Step 3 - add activity labels
+#' 
+#' Load activty labels from provided file :
+## ------------------------------------------------------------------------
 activity <- read.table("activity_labels.txt", stringsAsFactors=FALSE)
 names(activity) <- c("activity_id","activity_label")
 
-# include explicit activity labels in dataset by merging on activity id
+#' 
+#' Include explicit activity labels in dataset by merging on activity id :
+## ------------------------------------------------------------------------
 samsExplicit <- merge(sams, activity, by="activity_id")
 
-# Loop over feature names to make them more explicit
-
+#' 
+#' 
+#' ### Step 4 - make feature names more explicit
+#' 
+#' After checking on the forums there is consensus about a possible typo in the question (see https://class.coursera.org/getdata-002/forum/thread?thread_id=28#post-461). I could have blindly applied gsub to all names. I decided to be a bit more selective and chose to loop only over feature names to make them more explicit.
+## ------------------------------------------------------------------------
 originalNames <- names(samsExplicit)
-newNames <- vector('character')
 dontTouch <- c("activity_id","subject_id","activity_label")
 
 for( i in 1:length(originalNames) ){
@@ -76,32 +134,54 @@ for( i in 1:length(originalNames) ){
       a <- gsub("Mag","Magnitude ", a)
       a <- gsub("Body", "Body ", a)
       a <- gsub("Gravity", "Gravity ", a)
-      newNames <- c(newNames,a)
+      # proceed with renaming of current column
+      names(samsExplicit)[names(samsExplicit)==name] <- a
   }
 }
 
-colnames(samsExplicit) <- c("activity_id","subject_id",newNames,"activity_label")
+#' 
+#' Quick check of what our column names look like now :
+## ------------------------------------------------------------------------
 names(samsExplicit)
 
-# create new dataset showing means of all feature columns grouped by subject_id, activity
-# specify feature colums with robust named exclusion rather than specific indices inclusion
-
+#' 
+#' 
+#' ### Step 5 - compute aggregates and save 
+#' 
+#' Let's create a new dataset showing means of all feature columns grouped by subject_id and activity_label. Since there are 30 individuals and 6 activities, we should end up with 180 rows in the result data frame. We specify feature colums with robust named exclusion rather than specific indices inclusion.
+## ------------------------------------------------------------------------
 samsAggregate <- aggregate( samsExplicit[,-which(names(samsExplicit) %in% dontTouch)], 
-                            by=list(samsExplicit$activity_id, samsExplicit$subject_id),
+                            by=list(samsExplicit$subject_id, samsExplicit$activity_label),
                             FUN=mean)
-# check row count
+
+#' 
+#' Checking row count:
+## ------------------------------------------------------------------------
 nrow(samsAggregate)
-# check column names
+
+#' 
+#' Checking our column names are preserved:
+## ------------------------------------------------------------------------
 names(samsAggregate)
 
-# ach, aggregate renamed our grouped by cols, let's fix this
-names(samsAggregate)[names(samsAggregate)=="Group.1"] <- "activity_id"
-names(samsAggregate)[names(samsAggregate)=="Group.2"] <- "subject_id"
-head(names(samsAggregate))
+#' 
+#' Bummer, the aggregate function renamed our grouped by cols, let's fix this.
+## ------------------------------------------------------------------------
+names(samsAggregate)[names(samsAggregate)=="Group.1"] <- "subject_id"
+names(samsAggregate)[names(samsAggregate)=="Group.2"] <- "activity_label"
+head(samsAggregate[,1:3],n=60)
 
-# write tidy aggregates to text file
-write.table(samsAggregate,file="tidyAggregates.txt",sep=" ",col.names=TRUE,row.names=FALSE)
+#' 
+#' Ah, I'd like the ordering to be subject first, activity second. Let's do this:
+## ------------------------------------------------------------------------
+samsAggregateFinal <- samsAggregate[order(samsAggregate$subject_id, 
+                                          samsAggregate$activity_label),]
+rownames(samsAggregateFinal) <- NULL
+head(samsAggregateFinal[,1:3],n=18)
 
+#' 
+#' All good. Interestingly enough, the average body acceleration on X axis seem to stack up nicely based on related activities for subject 1, not as clearly for subjects 2 and 3... But this kind of analysis is out of scope for now and could be a good topic to further expand on. We can now write our tidy aggregates to text file and upload this dataset for peer assessment.
+## ------------------------------------------------------------------------
+write.table(samsAggregateFinal,file="tidyAggregates.txt",sep=" ",col.names=TRUE,row.names=FALSE)
 
-
-
+#' 
