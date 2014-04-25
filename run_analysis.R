@@ -11,41 +11,41 @@
 #
 
 features <- read.table("features.txt", header=FALSE, stringsAsFactors=FALSE)
+names(features) <- c("id","name")
 
 # load test sets
-xtest <- read.fwf("test/X_test.txt",widths=rep(16,561))
-names(xtest) <- features$V2
+xtest <- read.table("test/X_test.txt")
+names(xtest) <- features$name
 ytest <- read.table("test/y_test.txt")
 names(ytest) <- c("activity_id")
 stest <- read.table("test/subject_test.txt")
 names(stest) <- c("subject_id")
 # merge test sets side by side
 test <- cbind(stest, xtest, ytest)
+str(test)
 
 # load training sets
-xtrain <- read.fwf("train/X_train.txt",widths=rep(16,561))
-names(xtrain) <- features$V2
+xtrain <- read.table("train/X_train.txt")
+names(xtrain) <- features$name
 ytrain <- read.table("train/y_train.txt")
 names(ytrain) <- c("activity_id")
 strain <- read.table("train/subject_train.txt")
 names(strain) <- c("subject_id")
 # merge training sets side by side
 train <- cbind(strain, xtrain, ytrain)
+str(train)
 
 # append training and test sets together (on top of each other, by rows)
 full <- rbind(train,test)
+str(full)
 
 library(gdata)
 
-# match features associated to mean() computation while making sure to
-# exclude the frequency weighted averages (meanFreq) 
-meancols <- matchcols(full, with=c("mean"), without=c("meanFreq"))
-
-# match on "std" pattern
-stdcols <- matchcols(full,with=c("std"))
+# match features associated to mean() and std() computation 
+meanstdcols <- matchcols(full, with=c("mean\\(\\)|std\\(\\)"))
 
 # build dataset with subject, activity, mean and std features
-sams <- full[,c("subject_id", "activity_id", meancols, stdcols)]
+sams <- full[,c("subject_id", "activity_id", meanstdcols)]
 
 # load activty labels from file
 activity <- read.table("activity_labels.txt", stringsAsFactors=FALSE)
@@ -81,6 +81,7 @@ for( i in 1:length(originalNames) ){
 }
 
 colnames(samsExplicit) <- c("activity_id","subject_id",newNames,"activity_label")
+names(samsExplicit)
 
 # create new dataset showing means of all feature columns grouped by subject_id, activity
 # specify feature colums with robust named exclusion rather than specific indices inclusion
@@ -88,10 +89,15 @@ colnames(samsExplicit) <- c("activity_id","subject_id",newNames,"activity_label"
 samsAggregate <- aggregate( samsExplicit[,-which(names(samsExplicit) %in% dontTouch)], 
                             by=list(samsExplicit$activity_id, samsExplicit$subject_id),
                             FUN=mean)
+# check row count
+nrow(samsAggregate)
+# check column names
+names(samsAggregate)
 
 # ach, aggregate renamed our grouped by cols, let's fix this
 names(samsAggregate)[names(samsAggregate)=="Group.1"] <- "activity_id"
 names(samsAggregate)[names(samsAggregate)=="Group.2"] <- "subject_id"
+head(names(samsAggregate))
 
 # write tidy aggregates to text file
 write.table(samsAggregate,file="tidyAggregates.txt",sep=" ",col.names=TRUE,row.names=FALSE)
