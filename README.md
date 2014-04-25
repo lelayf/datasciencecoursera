@@ -11,9 +11,19 @@ Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ort
 "Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector Machine." International Workshop of Ambient Assisted Living (IWAAL 2012). 
 Vitoria-Gasteiz, Spain. Dec 2012
 
+### Preamble
+
+This README was written with the knitr pacakge. In RStudio you should actually be able to open tidy.Rmd and run the "Knit HTML" command in the script editor toolbar. It will execute all the R code chunks contained in the Rmd file.
+
+If you ever want to adopt "Rmd-first" coding practices you can still extract the R code from the Rmd file like this :
+```
+library(knitr)
+purl("tidy.Rmd", output = "run_analysis.R", documentation = 2)
+```
+
 ### Step 1 : data merge
 
-The UCI data sets is broken down in several files : predictor features, predicted activities, subject IDs. Each of this 3 sets is further broken down into training (70% of entire dataset) and test set (remaining 30%). 
+The UCI dataset is broken down in several files : predictor features, predicted activities, subject IDs. Each of this 3 sets is further broken down into training (70% of entire dataset) and test set (remaining 30%). 
 
 Let's start by loading feature labels from provided file :
 
@@ -442,13 +452,12 @@ samsExplicit <- merge(sams, activity, by = "activity_id")
 ```
 
 
-### Step 4 - makes feature names more explicit
+### Step 4 - make feature names more explicit
 
 After checking on the forums there is consensus about a possible typo in the question (see https://class.coursera.org/getdata-002/forum/thread?thread_id=28#post-461). I could have blindly applied gsub to all names. I decided to be a bit more selective and chose to loop only over feature names to make them more explicit.
 
 ```r
 originalNames <- names(samsExplicit)
-newNames <- vector("character")
 dontTouch <- c("activity_id", "subject_id", "activity_label")
 
 for (i in 1:length(originalNames)) {
@@ -467,15 +476,10 @@ for (i in 1:length(originalNames)) {
         a <- gsub("Mag", "Magnitude ", a)
         a <- gsub("Body", "Body ", a)
         a <- gsub("Gravity", "Gravity ", a)
-        newNames <- c(newNames, a)
+        # proceed with renaming of current column
+        names(samsExplicit)[names(samsExplicit) == name] <- a
     }
 }
-```
-
-Now we can replace our old column names with the new ones.
-
-```r
-colnames(samsExplicit) <- c("activity_id", "subject_id", newNames, "activity_label")
 ```
 
 Quick check of what our column names look like now :
@@ -559,11 +563,11 @@ names(samsExplicit)
 
 ### Step 5 - compute aggregates and save 
 
-Let's create a new dataset showing means of all feature columns grouped by subject_id and activity_id. Since there are 30 individuals and 6 activities, we should end up with 180 rows in the result data frame. We specify feature colums with robust named exclusion rather than specific indices inclusion.
+Let's create a new dataset showing means of all feature columns grouped by subject_id and activity_label. Since there are 30 individuals and 6 activities, we should end up with 180 rows in the result data frame. We specify feature colums with robust named exclusion rather than specific indices inclusion.
 
 ```r
 samsAggregate <- aggregate(samsExplicit[, -which(names(samsExplicit) %in% dontTouch)], 
-    by = list(samsExplicit$activity_id, samsExplicit$subject_id), FUN = mean)
+    by = list(samsExplicit$subject_id, samsExplicit$activity_label), FUN = mean)
 ```
 
 Checking row count:
@@ -656,24 +660,129 @@ names(samsAggregate)
 Bummer, the aggregate function renamed our grouped by cols, let's fix this.
 
 ```r
-names(samsAggregate)[names(samsAggregate) == "Group.1"] <- "activity_id"
-names(samsAggregate)[names(samsAggregate) == "Group.2"] <- "subject_id"
-head(names(samsAggregate))
+names(samsAggregate)[names(samsAggregate) == "Group.1"] <- "subject_id"
+names(samsAggregate)[names(samsAggregate) == "Group.2"] <- "activity_label"
+head(samsAggregate[, 1:3], n = 60)
 ```
 
 ```
-## [1] "activity_id"                                              
-## [2] "subject_id"                                               
-## [3] "Time Domain Body Linear Acceleration Mean X"              
-## [4] "Time Domain Body Linear Acceleration Mean Y"              
-## [5] "Time Domain Body Linear Acceleration Mean Z"              
-## [6] "Time Domain Body Linear Acceleration Standard Deviation X"
+##    subject_id activity_label Time Domain Body Linear Acceleration Mean X
+## 1           1         LAYING                                      0.2216
+## 2           2         LAYING                                      0.2814
+## 3           3         LAYING                                      0.2755
+## 4           4         LAYING                                      0.2636
+## 5           5         LAYING                                      0.2783
+## 6           6         LAYING                                      0.2487
+## 7           7         LAYING                                      0.2502
+## 8           8         LAYING                                      0.2613
+## 9           9         LAYING                                      0.2592
+## 10         10         LAYING                                      0.2802
+## 11         11         LAYING                                      0.2806
+## 12         12         LAYING                                      0.2601
+## 13         13         LAYING                                      0.2767
+## 14         14         LAYING                                      0.2333
+## 15         15         LAYING                                      0.2895
+## 16         16         LAYING                                      0.2742
+## 17         17         LAYING                                      0.2698
+## 18         18         LAYING                                      0.2747
+## 19         19         LAYING                                      0.2727
+## 20         20         LAYING                                      0.2395
+## 21         21         LAYING                                      0.2713
+## 22         22         LAYING                                      0.2800
+## 23         23         LAYING                                      0.2740
+## 24         24         LAYING                                      0.2729
+## 25         25         LAYING                                      0.2508
+## 26         26         LAYING                                      0.2716
+## 27         27         LAYING                                      0.2741
+## 28         28         LAYING                                      0.2759
+## 29         29         LAYING                                      0.2873
+## 30         30         LAYING                                      0.2810
+## 31          1        SITTING                                      0.2612
+## 32          2        SITTING                                      0.2771
+## 33          3        SITTING                                      0.2572
+## 34          4        SITTING                                      0.2715
+## 35          5        SITTING                                      0.2737
+## 36          6        SITTING                                      0.2768
+## 37          7        SITTING                                      0.2847
+## 38          8        SITTING                                      0.2675
+## 39          9        SITTING                                      0.2483
+## 40         10        SITTING                                      0.2706
+## 41         11        SITTING                                      0.2766
+## 42         12        SITTING                                      0.2750
+## 43         13        SITTING                                      0.2743
+## 44         14        SITTING                                      0.2800
+## 45         15        SITTING                                      0.2729
+## 46         16        SITTING                                      0.2808
+## 47         17        SITTING                                      0.2774
+## 48         18        SITTING                                      0.2773
+## 49         19        SITTING                                      0.2738
+## 50         20        SITTING                                      0.2780
+## 51         21        SITTING                                      0.2775
+## 52         22        SITTING                                      0.2736
+## 53         23        SITTING                                      0.2734
+## 54         24        SITTING                                      0.2735
+## 55         25        SITTING                                      0.2785
+## 56         26        SITTING                                      0.2582
+## 57         27        SITTING                                      0.2739
+## 58         28        SITTING                                      0.2770
+## 59         29        SITTING                                      0.2772
+## 60         30        SITTING                                      0.2683
 ```
 
-All good, we can now write our tidy aggregates to text file and upload this dataset for peer assessment.
+Ah, I'd like the ordering to be subject first, activity second. Let's to this:
 
 ```r
-write.table(samsAggregate, file = "tidyAggregates.txt", sep = " ", col.names = TRUE, 
+samsAggregateFinal <- samsAggregate[order(samsAggregate$subject_id, samsAggregate$activity_label), 
+    ]
+rownames(samsAggregateFinal) <- NULL
+head(samsAggregateFinal[, 1:3], n = 18)
+```
+
+```
+##    subject_id     activity_label
+## 1           1             LAYING
+## 2           1            SITTING
+## 3           1           STANDING
+## 4           1            WALKING
+## 5           1 WALKING_DOWNSTAIRS
+## 6           1   WALKING_UPSTAIRS
+## 7           2             LAYING
+## 8           2            SITTING
+## 9           2           STANDING
+## 10          2            WALKING
+## 11          2 WALKING_DOWNSTAIRS
+## 12          2   WALKING_UPSTAIRS
+## 13          3             LAYING
+## 14          3            SITTING
+## 15          3           STANDING
+## 16          3            WALKING
+## 17          3 WALKING_DOWNSTAIRS
+## 18          3   WALKING_UPSTAIRS
+##    Time Domain Body Linear Acceleration Mean X
+## 1                                       0.2216
+## 2                                       0.2612
+## 3                                       0.2789
+## 4                                       0.2773
+## 5                                       0.2892
+## 6                                       0.2555
+## 7                                       0.2814
+## 8                                       0.2771
+## 9                                       0.2779
+## 10                                      0.2764
+## 11                                      0.2776
+## 12                                      0.2472
+## 13                                      0.2755
+## 14                                      0.2572
+## 15                                      0.2800
+## 16                                      0.2756
+## 17                                      0.2924
+## 18                                      0.2608
+```
+
+All good. Interestingly enough, the average body acceleration on X axis seem to stack up nicely based on related activities for subject 1, not as clearly for subjects 2 and 3... But this kind of analysis is out of scope for now and could be a good topic to further expand on. We can now write our tidy aggregates to text file and upload this dataset for peer assessment.
+
+```r
+write.table(samsAggregateFinal, file = "tidyAggregates.txt", sep = " ", col.names = TRUE, 
     row.names = FALSE)
 ```
 
