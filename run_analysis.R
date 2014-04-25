@@ -1,4 +1,14 @@
-setwd("~/Coursera/jhdss/3-getdata/peer/UCI HAR Dataset")
+#
+#   This script uses data from the UCI Machine Learning Repository :
+#   Human Activity Recognition Using Smartphones Data Set 
+#   http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones#
+#
+#   Associated research :
+#   Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. 
+#   "Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support 
+#   Vector Machine." International Workshop of Ambient Assisted Living (IWAAL 2012). 
+#   Vitoria-Gasteiz, Spain. Dec 2012
+#
 
 features <- read.table("features.txt", header=FALSE, stringsAsFactors=FALSE)
 
@@ -54,7 +64,7 @@ for( i in 1:length(originalNames) ){
   name <- originalNames[i]
   # tidy up only if current column name is a feature column name
   # use naive regular expressions to perform substitutions
-  if( !name %in% dontTouch ) {
+  if( ! name %in% dontTouch ) {
       a <- gsub("^t", "Time Domain ", name )
       a <- gsub("^f", "Frequency Domain ", a)
       a <- gsub("std\\(\\)", "Standard Deviation ", a)
