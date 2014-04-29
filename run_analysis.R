@@ -91,7 +91,7 @@ str(full)
 #' 
 #' Pattern matching on columns names can be done with matchcols function in gdata package.
 ## ------------------------------------------------------------------------
-install.packages("gdata") # line added Tue 29th Apr
+install.packages("gdata",repos="http://cran.us.r-project.org") # line added Tue 29th Apr
 library(gdata)
 
 #' 

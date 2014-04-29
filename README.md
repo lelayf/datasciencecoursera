@@ -412,11 +412,13 @@ str(full)
 Pattern matching on columns names can be done with matchcols function in gdata package.
 
 ```r
-install.packages("gdata")  # line added Tue 29th Apr
+install.packages("gdata", repos = "http://cran.us.r-project.org")  # line added Tue 29th Apr
 ```
 
 ```
-## Error: trying to use CRAN without setting a mirror
+## 
+## The downloaded binary packages are in
+## 	/var/folders/nq/4hcmzrt50w7872sc8zh0drzw0000gn/T//RtmpZZMque/downloaded_packages
 ```
 
 ```r

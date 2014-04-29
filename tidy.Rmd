@@ -83,7 +83,7 @@ str(full)
 
 Pattern matching on columns names can be done with matchcols function in gdata package.
 ```{r}
-install.packages("gdata") # line added Tue 29th Apr
+install.packages("gdata",repos="http://cran.us.r-project.org") # line added Tue 29th Apr
 library(gdata)
 ```
 Match features whose name contain string "mean()" or string "std()" using a regular expression (we make sure to use double backslash to escape parenthesis) :
