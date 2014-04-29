@@ -2,7 +2,9 @@ Tidying the UCI HAR data set
 ========================================================
 
 This script uses data from the UCI Machine Learning Repository :
+
 **Human Activity Recognition Using Smartphones Data Set**
+
 http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
 
 *Associated research*
@@ -12,6 +14,12 @@ Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ort
 Vitoria-Gasteiz, Spain. Dec 2012
 
 ### Preamble
+
+*Last minute addendum (Tuesday April 29th)*
+ - I was so stuck on the 5 key instructions of the project ssignment that I didn't remember we should submit a code book, which is actually partially shown in this README but not as clearly as it should. So you will find a file CodeBook.md at the root of this repository.
+ - I also realized the instructions confused me in thinking the expected tidy dataset should be comprised of one single table. This is just plain stupid of me, a tidy dataset is actually made of several data frames that you can join if needed, with each reference data frame containing single observational units. In our case the subject is our observational unit so I finally split the initial single dataframe I submitted into several dataframes (one per activity, see at end of this README).
+ 
+*End of last minute edit*
 
 This README was written with the knitr pacakge. In RStudio you should actually be able to open tidy.Rmd and run the "Knit HTML" command in the script editor toolbar. It will execute all the R code chunks contained in the Rmd file.
 
@@ -404,6 +412,14 @@ str(full)
 Pattern matching on columns names can be done with matchcols function in gdata package.
 
 ```r
+install.packages("gdata")  # line added Tue 29th Apr
+```
+
+```
+## Error: trying to use CRAN without setting a mirror
+```
+
+```r
 library(gdata)
 ```
 
@@ -729,7 +745,7 @@ head(samsAggregate[, 1:3], n = 60)
 ## 60         30        SITTING                                      0.2683
 ```
 
-Ah, I'd like the ordering to be subject first, activity second. Let's to this:
+Ah, I'd like the ordering to be subject first, activity second. Let's do this:
 
 ```r
 samsAggregateFinal <- samsAggregate[order(samsAggregate$subject_id, samsAggregate$activity_label), 
@@ -785,4 +801,21 @@ All good. Interestingly enough, the average body acceleration on X axis seem to 
 write.table(samsAggregateFinal, file = "tidyAggregates.txt", sep = " ", col.names = TRUE, 
     row.names = FALSE)
 ```
+
+
+**added on Tue 29th Apr**
+
+I actually realized I didn't have single observational units in my data frame, so although it feels tidy it is not 100% tidy. Let's simply create one data frame for each activity.
+
+```r
+tidy <- split(samsAggregateFinal, samsAggregateFinal$activity_label)
+for (df in tidy) {
+    write.table(df, file = paste("tidy", df[1, 2], ".txt", sep = "_"), sep = " ", 
+        col.names = TRUE, row.names = FALSE)
+}
+```
+
+You now have a tidy dataset, with 6 files (one per activity) holding 30 records each (one per subject).
+
+
 
