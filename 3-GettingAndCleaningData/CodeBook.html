@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>Code Book </title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+
+
+
+
+</head>
+
+<body>
+<h1>Code Book </h1>
+
+<p>This code book was submitted after the deadline, as part of a peer assessment project for Coursera module &ldquo;Getting and cleaning data&rdquo;</p>
+
+<p>All variables 3 to 68 are aggregate measurements (either mean or standard deviation). The variable names were bulit to be self explicit so we don&#39;t feel the need to describe further.</p>
+
+<p>[1] &ldquo;subject_id&rdquo; : integer (1..30) identifying an observational unit, that is a subject holding a smartphone part of the study</p>
+
+<p>[2] &ldquo;activity_label&rdquo; : the activity under wich measurements in this dataset were made (one of LAYING, SITTING, STANDING, WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS) </p>
+
+<p>[3] &ldquo;Time.Domain.Body.Linear.Acceleration.Mean.X&rdquo;                                      </p>
+
+<p>[4] &ldquo;Time.Domain.Body.Linear.Acceleration.Mean.Y&rdquo;                                      </p>
+
+<p>[5] &ldquo;Time.Domain.Body.Linear.Acceleration.Mean.Z&rdquo;                                      </p>
+
+<p>[6] &ldquo;Time.Domain.Body.Linear.Acceleration.Standard.Deviation.X&rdquo;                        </p>
+
+<p>[7] &ldquo;Time.Domain.Body.Linear.Acceleration.Standard.Deviation.Y&rdquo;                        </p>
+
+<p>[8] &ldquo;Time.Domain.Body.Linear.Acceleration.Standard.Deviation.Z&rdquo;                        </p>
+
+<p>[9] &ldquo;Time.Domain.Gravity.Linear.Acceleration.Mean.X&rdquo;                                   </p>
+
+<p>[10] &ldquo;Time.Domain.Gravity.Linear.Acceleration.Mean.Y&rdquo;                                   </p>
+
+<p>[11] &ldquo;Time.Domain.Gravity.Linear.Acceleration.Mean.Z&rdquo;                                   </p>
+
+<p>[12] &ldquo;Time.Domain.Gravity.Linear.Acceleration.Standard.Deviation.X&rdquo;                     </p>
+
+<p>[13] &ldquo;Time.Domain.Gravity.Linear.Acceleration.Standard.Deviation.Y&rdquo;                     </p>
+
+<p>[14] &ldquo;Time.Domain.Gravity.Linear.Acceleration.Standard.Deviation.Z&rdquo;                     </p>
+
+<p>[15] &ldquo;Time.Domain.Body.Linear.Acceleration.Jerk.Mean.X&rdquo;                                 </p>
+
+<p>[16] &ldquo;Time.Domain.Body.Linear.Acceleration.Jerk.Mean.Y&rdquo;                                 </p>
+
+<p>[17] &ldquo;Time.Domain.Body.Linear.Acceleration.Jerk.Mean.Z&rdquo;                                 </p>
+
+<p>[18] &ldquo;Time.Domain.Body.Linear.Acceleration.Jerk.Standard.Deviation.X&rdquo;                   </p>
+
+<p>[19] &ldquo;Time.Domain.Body.Linear.Acceleration.Jerk.Standard.Deviation.Y&rdquo;                   </p>
+
+<p>[20] &ldquo;Time.Domain.Body.Linear.Acceleration.Jerk.Standard.Deviation.Z&rdquo;                   </p>
+
+<p>[21] &ldquo;Time.Domain.Body.Angular.Velocity.Mean.X&rdquo;                                         </p>
+
+<p>[22] &ldquo;Time.Domain.Body.Angular.Velocity.Mean.Y&rdquo;                                         </p>
+
+<p>[23] &ldquo;Time.Domain.Body.Angular.Velocity.Mean.Z&rdquo;                                         </p>
+
+<p>[24] &ldquo;Time.Domain.Body.Angular.Velocity.Standard.Deviation.X&rdquo;                           </p>
+
+<p>[25] &ldquo;Time.Domain.Body.Angular.Velocity.Standard.Deviation.Y&rdquo;                           </p>
+
+<p>[26] &ldquo;Time.Domain.Body.Angular.Velocity.Standard.Deviation.Z&rdquo;                           </p>
+
+<p>[27] &ldquo;Time.Domain.Body.Angular.Velocity.Jerk.Mean.X&rdquo;                                    </p>
+
+<p>[28] &ldquo;Time.Domain.Body.Angular.Velocity.Jerk.Mean.Y&rdquo;                                    </p>
+
+<p>[29] &ldquo;Time.Domain.Body.Angular.Velocity.Jerk.Mean.Z&rdquo;                                    </p>
+
+<p>[30] &ldquo;Time.Domain.Body.Angular.Velocity.Jerk.Standard.Deviation.X&rdquo;                      </p>
+
+<p>[31] &ldquo;Time.Domain.Body.Angular.Velocity.Jerk.Standard.Deviation.Y&rdquo;                      </p>
+
+<p>[32] &ldquo;Time.Domain.Body.Angular.Velocity.Jerk.Standard.Deviation.Z&rdquo;                      </p>
+
+<p>[33] &ldquo;Time.Domain.Body.Linear.Acceleration.Magnitude.Mean.&rdquo;                             </p>
+
+<p>[34] &ldquo;Time.Domain.Body.Linear.Acceleration.Magnitude.Standard.Deviation.&rdquo;               </p>
+
+<p>[35] &ldquo;Time.Domain.Gravity.Linear.Acceleration.Magnitude.Mean.&rdquo;                          </p>
+
+<p>[36] &ldquo;Time.Domain.Gravity.Linear.Acceleration.Magnitude.Standard.Deviation.&rdquo;            </p>
+
+<p>[37] &ldquo;Time.Domain.Body.Linear.Acceleration.Jerk.Magnitude.Mean.&rdquo;                        </p>
+
+<p>[38] &ldquo;Time.Domain.Body.Linear.Acceleration.Jerk.Magnitude.Standard.Deviation.&rdquo;          </p>
+
+<p>[39] &ldquo;Time.Domain.Body.Angular.Velocity.Magnitude.Mean.&rdquo;                                </p>
+
+<p>[40] &ldquo;Time.Domain.Body.Angular.Velocity.Magnitude.Standard.Deviation.&rdquo;                  </p>
+
+<p>[41] &ldquo;Time.Domain.Body.Angular.Velocity.Jerk.Magnitude.Mean.&rdquo;                           </p>
+
+<p>[42] &ldquo;Time.Domain.Body.Angular.Velocity.Jerk.Magnitude.Standard.Deviation.&rdquo;             </p>
+
+<p>[43] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Mean.X&rdquo;                                 </p>
+
+<p>[44] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Mean.Y&rdquo;                                 </p>
+
+<p>[45] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Mean.Z&rdquo;                                 </p>
+
+<p>[46] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Standard.Deviation.X&rdquo;                   </p>
+
+<p>[47] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Standard.Deviation.Y&rdquo;                   </p>
+
+<p>[48] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Standard.Deviation.Z&rdquo;                   </p>
+
+<p>[49] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Jerk.Mean.X&rdquo;                            </p>
+
+<p>[50] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Jerk.Mean.Y&rdquo;                            </p>
+
+<p>[51] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Jerk.Mean.Z&rdquo;                            </p>
+
+<p>[52] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Jerk.Standard.Deviation.X&rdquo;              </p>
+
+<p>[53] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Jerk.Standard.Deviation.Y&rdquo;              </p>
+
+<p>[54] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Jerk.Standard.Deviation.Z&rdquo;              </p>
+
+<p>[55] &ldquo;Frequency.Domain.Body.Angular.Velocity.Mean.X&rdquo;                                    </p>
+
+<p>[56] &ldquo;Frequency.Domain.Body.Angular.Velocity.Mean.Y&rdquo;                                    </p>
+
+<p>[57] &ldquo;Frequency.Domain.Body.Angular.Velocity.Mean.Z&rdquo;                                    </p>
+
+<p>[58] &ldquo;Frequency.Domain.Body.Angular.Velocity.Standard.Deviation.X&rdquo;                      </p>
+
+<p>[59] &ldquo;Frequency.Domain.Body.Angular.Velocity.Standard.Deviation.Y&rdquo;                      </p>
+
+<p>[60] &ldquo;Frequency.Domain.Body.Angular.Velocity.Standard.Deviation.Z&rdquo;                      </p>
+
+<p>[61] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Magnitude.Mean.&rdquo;                        </p>
+
+<p>[62] &ldquo;Frequency.Domain.Body.Linear.Acceleration.Magnitude.Standard.Deviation.&rdquo;          </p>
+
+<p>[63] &ldquo;Frequency.Domain.Body.Body.Linear.Acceleration.Jerk.Magnitude.Mean.&rdquo;              </p>
+
+<p>[64] &ldquo;Frequency.Domain.Body.Body.Linear.Acceleration.Jerk.Magnitude.Standard.Deviation.&rdquo;</p>
+
+<p>[65] &ldquo;Frequency.Domain.Body.Body.Angular.Velocity.Magnitude.Mean.&rdquo;                      </p>
+
+<p>[66] &ldquo;Frequency.Domain.Body.Body.Angular.Velocity.Magnitude.Standard.Deviation.&rdquo;        </p>
+
+<p>[67] &ldquo;Frequency.Domain.Body.Body.Angular.Velocity.Jerk.Magnitude.Mean.&rdquo;                 </p>
+
+<p>[68] &ldquo;Frequency.Domain.Body.Body.Angular.Velocity.Jerk.Magnitude.Standard.Deviation.&rdquo;  </p>
+
+</body>
+
+</html>
+
