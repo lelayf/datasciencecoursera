@@ -33,6 +33,8 @@ title(main="Total emissions across all sources")
 dev.off()
 ```
 
+<img src="plot1.png" />
+
 This graph shows the total measured emissions across all sources have decreased from 1999 to 2002, 2002 to 2005 and 2005 to 2008. The total emissions range between 3,464,206 to 7,332,967. *One question comes to my mind* : are we comparing measurements from the same sources for all these years? 
 
 ```{r}
@@ -73,7 +75,11 @@ title(main="Total emissions across sources common to all years")
 dev.off()
 ```
 
+<img src="plot1bis.png" />
+
 The plot also shows a decreasing profile but with a stronger relative drop from 1999 to 2002. Total emissions range between 2,888,186 tons and 6,037,076 tons.
+
+*For the remaining part of the assignment I will use the datasets filtered on sources active all year to establish proper comparisons.*
 
 ### Question 2
 
@@ -88,6 +94,8 @@ title(main="Total emissions across sources active all years in Baltimore")
 dev.off()
 ```
 
+<img src="plot2.png" />
+
 Although the emissions have not steadily decreased over time (emissions in 2005 are 36% higher than in 2002), the total emissions have decreased from 1999 to 2008 by 63%, from 2825 tons to 1033 tons.
 
 ### Question 3
@@ -98,10 +106,13 @@ We will first create a new dataset to aggregate on both year and source type, th
 
 ```{r}
 NEIBaltimoreYearType <- aggregate(NEIWithCommonSourcesOnlyBaltimore$Emissions, list(year=NEIWithCommonSourcesOnlyBaltimore$year,type=NEIWithCommonSourcesOnlyBaltimore$type), sum)
+library(ggplot2)
 png(filename = "plot3.png", width = 640, height = 480, units = "px", res=72, bg = "white")
 ggplot(data=NEIBaltimoreYearType, aes(x=year,y=x,group=type,color=type)) + geom_line() + geom_point() + ggtitle("Baltimore emissions per year and source type") + ylab("Total emssions (tons)") + xlab("Year")
 dev.off()
 ```
+
+<img src="plot3.png" />
 
 We can see that NON-POINT and NON-ROAD have decreased steadily meanwhile POINT hasn't.
 
@@ -120,7 +131,10 @@ Now let's plot this :
 ```{r}
 png(filename = "plot4.png", width = 640, height = 480, units = "px", res=72, bg = "white")
 ggplot(data=TotalEmissionsCoal, aes(x=year,y=x)) + geom_line() + geom_point() + ggtitle("USA coal combustion-related emissions for sources active all years") + ylab("Total emssions (tons)") + xlab("Year")
+dev.off()
 ```
+
+<img src="plot4.png" />
 
 The emissions where quite stable from 1999 to 2005 but sharply decreased afterwards for an overall 39.6% drop between 1999 and 2008.
 
@@ -129,16 +143,46 @@ The emissions where quite stable from 1999 to 2005 but sharply decreased afterwa
 How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
 
 ```{r}
-
+SCCMotorVeh <- SCC[grep("Veh",SCC$SCC.Level.Three),]
+NEIVehiclesBaltimore <- NEIWithCommonSourcesOnlyBaltimore[NEIWithCommonSourcesOnlyBaltimore$SCC %in% SCCMotorVeh$SCC,]
+TotalEmissionsVeh <- aggregate(NEIVehiclesBaltimore$Emissions,list(year=NEIVehiclesBaltimore$year),sum)
 ```
 
+There is not much data to deal with here, I suspect restricting the data to sources active across all years might have been more restrictive than anticipated by the creator of the assignment. Here we only have vehicle emissions data for years 2005 and 2008, with equal totals amounting to 10.17 tons. Let's do it without the restriction on sources being common to all years.
 
+```{r}
+NEIVeh <- NEI[NEI$SCC %in% SCCMotorVeh$SCC,]
+NEIVehBaltimore <- NEIVeh[NEIVeh$fips == "24510",]
+TotalEmVeh <- aggregate(NEIVehBaltimore$Emissions,list(year=NEIVehBaltimore$year),sum)
+```
+
+Now let's plot this :
+
+```{r}
+png(filename = "plot5.png", width = 640, height = 480, units = "px", res=72, bg = "white")
+ggplot(data=TotalEmVeh, aes(x=year,y=x)) + geom_line() + geom_point() + ggtitle("Baltimore vehicle emissions") + ylab("Total emssions (tons)") + xlab("Year")
+dev.off()
+```
+
+<img src="plot5.png" />
 
 ### Question 6
 
+Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California (fips == "06037"). Which city has seen greater changes over time in motor vehicle emissions?
 
+```{r}
+NEIVehBaltimoreLA <- NEIVeh[NEIVeh$fips %in% c("24510","06037"),]
+TotalEmVehBLA <- aggregate(NEIVehBaltimoreLA$Emissions,list(year=NEIVehBaltimoreLA$year,city=NEIVehBaltimoreLA$fips),sum)
+```
 
+Now let's plot this :
 
+```{r}
+png(filename = "plot6.png", width = 640, height = 480, units = "px", res=72, bg = "white")
+ggplot(data=TotalEmVehBLA, aes(x=year,y=x,group=city,color=city)) + geom_line() + geom_point() + ggtitle("Baltimore vs LA vehicle emissions") + ylab("Total emssions (tons)") + xlab("Year")
+dev.off()
+```
 
+Over the 1999-2008 period Baltimore experienced the greatest change with a 77% decrease in emissions. Meanwhile LA emissions ended almost unchanged over the same period with ~2980 tons both in 1999 and 2008.
 
-
+<img src="plot6.png" />
