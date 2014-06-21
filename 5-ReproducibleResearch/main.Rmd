@@ -1,0 +1,5 @@
+Impact of weather events on health and the US economy
+========================================================
+
+This is a report demonstrating the impact of severe weather events on population health and the economy at large in the USA. The *Storm Data* we explore is provided by the National Oceanic and Atmospheric Administration (NOAA) as a series of measurements taken between the year 1950 and November 2011.
+
