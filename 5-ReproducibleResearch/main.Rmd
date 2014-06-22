@@ -1,9 +1,9 @@
-Impact of weather events on health and the US economy
+Impact of severe weather on health and the US economy
 ========================================================
 
 This is a report demonstrating the impact of severe weather events on population health and the economy at large in the USA. The *Storm Data* we explore is provided by the National Oceanic and Atmospheric Administration (NOAA) as a series of measurements taken between the year 1950 and November 2011.
 
-# Data Processing 
+## Data Processing 
 
 ```{r cache=TRUE}
 download.file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2",destfile="StormData.csv.bz2",method="curl")
@@ -25,36 +25,12 @@ We will focus on the following variables :
 - PROPDMG,PROPDMGEXP : Impact on the economy in terms of property damage
 - CROPDMG, CROPDMGEXP : Impact on the economy in terms of crop damage
 
-It seems we have several timezones
-I would be
-How dirty is the Hour/minute part?
+## Results
 
-```{r}
-unique(data$BGN_TIME)
-```
- - odd use of military time jointly with AM/PM suffix
- - errors such as "1990", "2090", "2400", "9999", "000", "0572", "1580", "13O0" 
+We will try to use the dataset to answer 2 questions.
 
+### Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
 
-```{r}
-unique(data$BGN_DATE)
-```
-
-
-```{r}
-e <-  data.frame()
-for( tz in unique(data$TIME_ZONE)) {
-  d <- subset(data,data$TIME_ZONE==tz)
-  d$BGN_DATETIME <- as.Date(paste(d$BGN_DATE," ",d$BGN_TIME),format="%m/%d/%Y 0:00:00 %H%M",tz=tz)
-  e <- rbind(d,e)
-}
-data$BGN_DATE <- as.Date(data$BGN_DATE,format="%m/%d/%Y 0:00:00")
-```
-
-# Results
-
-## Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
-
-## Across the United States, which types of events have the greatest economic consequences?
+### Across the United States, which types of events have the greatest economic consequences?
 
 
